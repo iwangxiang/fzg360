@@ -1,0 +1,933 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "房掌柜",
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"backgroundColor": "rgba(231, 231, 231,.7)",
+							"borderRadius": "16px",
+							"placeholder": "请输入楼盘关键字",
+							"disabled": true,
+							"placeholderColor": "#606266"
+						},
+						"buttons": [{
+							"text": "东莞",
+							"select": true,
+							"color": "#000000",
+							"width": "60px",
+							"fontSize": "16",
+							"float": "left",
+							"background": "rgba(0,0,0,0)"
+						}]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/index/search",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				},
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/sale/broker",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue61b",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "掌柜经纪人",
+				"enablePullDownRefresh": true
+			}
+		},
+		// #ifndef APP-PLUS
+		{
+			"path": "pages/news/index1",
+			"style": {
+				"navigationBarTitleText": "新闻头条",
+				"enablePullDownRefresh": true
+			}
+		},
+		// #endif
+		// #ifdef APP-PLUS
+		{
+			"path": "pages/news/index",
+			"style": {
+				"navigationBarTitleText": "新闻头条"
+			}
+		},
+		// #endif
+		{
+			"path": "pages/ask/index",
+			"style": {
+				"navigationBarTitleText": "房掌帮办"
+			}
+		},
+		{
+			"path": "pages/user/index",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				},
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/index/city",
+			"style": {
+				"navigationBarTitleText": "城市选择"
+			}
+		},
+		{
+			"path": "pages/house/index",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#fff",
+							"borderRadius": "5px",
+							"placeholder": "请输入楼盘名或者地段名",
+							"placeholderColor": "#b6b6b6",
+							"disabled": false
+						},
+						"buttons": [{
+								"text": "\ue7e8",
+								"fontSrc": "/static/iconfont.ttf",
+								"fontSize": "20px"
+							},
+							{
+								"text": "\ue7e3",
+								"fontSrc": "/static/iconfont.ttf",
+								"fontSize": "20px"
+							}
+						]
+					}
+				},
+				"navigationBarTitleText": "新房",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/find",
+			"style": {
+				"navigationBarTitleText": "帮你找房"
+			}
+		},
+		{
+			"path": "pages/sale/index",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#fff",
+							"borderRadius": "5px",
+							"placeholder": "搜索二手房",
+							"placeholderColor": "#b6b6b6",
+							"disabled": false
+						},
+						"buttons": [{
+							"text": "\ue7d6",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "20px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "二手房",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/sale/detail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue61b",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "二手房详情"
+			}
+		},
+		{
+			"path": "pages/sale/xiaoqu",
+			"style": {
+				"navigationBarTitleText": "二手房房源列表"
+			}
+		},
+		{
+			"path": "pages/rent/index",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#fff",
+							"borderRadius": "5px",
+							"placeholder": "请输入小区名称",
+							"placeholderColor": "#b6b6b6",
+							"disabled": false
+						}
+					}
+				},
+				"navigationBarTitleText": "租房",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/rent/detail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue61b",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "租房详情"
+			}
+		},
+		{
+			"path": "pages/rent/xiaoqu",
+			"style": {
+				"navigationBarTitleText": "租房房源列表"
+			}
+		},
+		{
+			"path": "pages/index/webView", // 公共页,传递title改变标题
+			"style": {
+				"navigationBarTitleText": "webView"
+			}
+		},
+		{
+			"path": "pages/world/index",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#FFFFFF",
+							"borderRadius": "5px",
+							"placeholder": "请输入房源关键字",
+							"placeholderColor": "#b6b6b6",
+							"disabled": true
+						}
+					}
+				},
+				"navigationBarTitleText": "海外房产"
+			}
+		},
+		{
+			"path": "pages/world/houseList",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7b6",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "海外房源",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/world/houseView",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "分享",
+							"type": "share"
+						}]
+					}
+				},
+				"navigationBarTitleText": "海外房源详情"
+			}
+		},
+		{
+			"path": "pages/world/newsList",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7b6",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "海外资讯",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/world/newsView",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7e7",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "海外资讯详情"
+			}
+		},
+		{
+			"path": "pages/world/videoList",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7b6",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "掌柜视野",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/world/videoView",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7e7",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "掌柜视野"
+			}
+		},
+		{
+			"path": "pages/world/faqList",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7b6",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "掌柜问答",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/vlogs",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				},
+				"navigationBarTitleText": "浏览记录",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/world/faqView",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue61b",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "掌柜问答详情"
+			}
+		},
+		{
+			"path": "pages/world/search",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				},
+				"navigationBarTitleText": "海外房源（资讯，问答，视频）搜索"
+			}
+		},
+		{
+			"path": "pages/world/housePics",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				},
+				"navigationBarTitleText": "房源相册"
+			}
+		},
+		{
+			"path": "pages/news/jiaju",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#fff",
+							"borderRadius": "5px",
+							"placeholder": "请输入家居关键字",
+							"placeholderColor": "#b6b6b6",
+							"disabled": false
+						}
+					}
+				},
+				"navigationBarTitleText": "家居装修",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/news/jiajuDetail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "分享",
+							"type": "share"
+						}]
+					}
+				},
+				"navigationBarTitleText": "家居"
+			}
+		},
+		{
+			"path": "pages/news/daogou",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#fff",
+							"borderRadius": "5px",
+							"placeholder": "请输入关键字",
+							"placeholderColor": "#b6b6b6",
+							"disabled": false
+						}
+					}
+				},
+				"navigationBarTitleText": "楼盘导购",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/config/index",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
+		},
+		{
+			"path": "pages/config/push",
+			"style": {
+				"navigationBarTitleText": "推送设置"
+			}
+		},
+		{
+			"path": "pages/config/about",
+			"style": {
+				"navigationBarTitleText": "关于房掌柜"
+			}
+		},
+		{
+			"path": "pages/config/feedback",
+			"style": {
+				"navigationBarTitleText": "意见反馈"
+			}
+		},
+		{
+			"path": "pages/news/panoramic",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"searchInput": {
+							"align": "left",
+							"backgroundColor": "#fff",
+							"borderRadius": "5px",
+							"placeholder": "请输入房源关键字",
+							"placeholderColor": "#b6b6b6",
+							"disabled": false
+						}
+					}
+				},
+				"navigationBarTitleText": "全景看房",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/sale/weitou",
+			"style": {
+				"navigationBarTitleText": "委托发布"
+			}
+		},
+		{
+			"path": "pages/house/home",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"type": "transparent",
+						"buttons": [{
+								"text": "\ue7e8",
+								"fontSrc": "/static/iconfont.ttf",
+								"fontSize": "18px"
+							},
+							{
+								"text": "\ue7e7",
+								"fontSrc": "/static/iconfont.ttf",
+								"fontSize": "18px"
+							}
+
+						]
+					}
+				},
+				"navigationBarTitleText": "新房详情页"
+			}
+		},
+		{
+			"path": "pages/house/pics",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"backgroundColor": "#000000",
+						"titleColor": "#ffffff",
+						"buttons": [{
+								"text": "全部图片",
+								"color": "#ffffff",
+								"fontSize": "16px"
+							}
+
+						]
+					}
+				},
+				"navigationBarTitleText": "1/18"
+			}
+		},
+		{
+			"path": "pages/house/picAll",
+			"style": {
+				"navigationBarTitleText": "全部图片"
+			}
+		},
+		{
+			"path": "pages/house/map",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue61b",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "位置与周边"
+			}
+		},
+		{
+			"path": "pages/house/somap",
+			"style": {
+				"navigationBarTitleText": "地图找房"
+			}
+		},
+		{
+			"path": "pages/user/login",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/user/uinfo",
+			"style": {
+				"navigationBarTitleText": "编辑资料"
+			}
+		},
+		{
+			"path": "pages/user/getpw",
+			"style": {
+				"navigationBarTitleText": "找回密码"
+			}
+		},
+		{
+			"path": "pages/user/getpwRes",
+			"style": {
+				"navigationBarTitleText": "找回密码"
+			}
+		},
+		{
+			"path": "pages/user/reg",
+			"style": {
+				"navigationBarTitleText": "验证手机号码"
+			}
+		},
+		{
+			"path": "pages/user/editpw",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
+		},
+		{
+			"path": "pages/user/bindTel",
+			"style": {
+				"navigationBarTitleText": "绑定手机号码"
+			}
+		},
+		{
+			"path": "pages/user/utel",
+			"style": {
+				"navigationBarTitleText": "修改手机号码"
+			}
+		},
+		{
+			"path": "pages/user/utelRes",
+			"style": {
+				"navigationBarTitleText": "修改手机号码"
+			}
+		},
+		{
+			"path": "pages/house/detail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7e7",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "楼盘详情"
+			}
+		},
+		{
+			"path": "pages/house/dynamic",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7e7",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "楼盘动态"
+			}
+		},
+		{
+			"path": "pages/house/hxList",
+			"style": {
+				"app-plus": {},
+				"navigationBarTitleText": "楼盘户型",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/house/hxView",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7e7",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "户型详情"
+			}
+		},
+		{
+			"path": "pages/house/building",
+			"style": {
+				/* "app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue7e7",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				}, */
+				"navigationBarTitleText": "楼栋"
+			}
+		},
+		{
+			"path": "pages/calcu/loan",
+			"style": {
+				"navigationBarTitleText": "房贷计算器"
+			}
+		},
+		{
+			"path": "pages/calcu/loanRes",
+			"style": {
+				"navigationBarTitleText": "房贷计算结果"
+			}
+		},
+		{
+			"path": "pages/calcu/tax",
+			"style": {
+				"navigationBarTitleText": "税费计算器"
+			}
+		},
+		{
+			"path": "pages/news/detail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "分享",
+							"type": "share"
+						}]
+					}
+				},
+				"navigationBarTitleText": "资讯"
+			}
+		},
+		{
+			"path": "pages/news/pcDetail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "分享",
+							"type": "share"
+						}]
+					}
+				},
+				"navigationBarTitleText": "资讯"
+			}
+		},
+		{
+			"path": "pages/news/videoDetail",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "分享",
+							"type": "share"
+						}]
+					}
+				},
+				"navigationBarTitleText": "视频"
+			}
+		},
+		{
+			"path": "pages/msg/notice",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				},
+				"navigationBarTitleText": "消息"
+			}
+		},
+		{
+			"path": "pages/news/zgHao",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "分享",
+							"type": "share"
+						}]
+					}
+				},
+				"navigationBarTitleText": "掌柜号",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/favor",
+			"style": {
+				"navigationBarTitleText": "我的关注",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/myqa",
+			"style": {
+				"navigationBarTitleText": "我的问答"
+			}
+		},
+		/*{
+			"path": "pages/msg/chat0",
+			"style": {
+				"navigationBarTitleText": "chat对比用"
+			}
+		},*/
+		{
+			"path": "pages/msg/user",
+			"style": {
+				"navigationBarTitleText": "用户模拟"
+			}
+		},
+		{
+			"path": "pages/msg/list",
+			"style": {
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "消息列表"
+			}
+		},
+		{
+			"path": "pages/msg/chat",
+			"style": {
+				"backgroundColorBottom": "#e2e2e2",
+				"app-plus": {
+					"softinputNavBar": "none",
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/sale/pics",
+			"style": {
+				"app-plus": {
+					"titleNView": {
+						"backgroundColor": "#0A0A0A",
+						"titleColor": "#ffffff",
+						"buttons": [{
+							"text": "\ue633",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "18px"
+						}]
+					}
+				},
+				"navigationBarTitleText": "1/10"
+			}
+		},
+		{
+			"path": "pages/jifen/index",
+			"style": {
+				"navigationBarTitleText": "我的积分"
+			}
+		},
+		{
+			"path": "pages/jifen/rule",
+			"style": {
+				"navigationBarTitleText": "积分规则"
+			}
+		},
+		{
+			"path": "pages/jifen/task",
+			"style": {
+				"navigationBarTitleText": "积分任务"
+			}
+		},
+		{
+			"path": "pages/jifen/cargo",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
+		},
+		{
+			"path": "pages/jifen/exchange",
+			"style": {
+				"navigationBarTitleText": "兑换记录"
+			}
+		},
+		{
+			"path": "pages/news/liveDetail",
+			"style": {
+				"navigationBarTitleText": "直播详情"
+			}
+		},
+		{
+			"path": "pages/user/appointment",
+			"style": {
+				"navigationBarTitleText": "我的预约",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/user/appDetail",
+			"style": {
+				"navigationBarTitleText": "预约详情"
+			}
+		}/*, 使用webview打开,后续可删除: /news/dsfcDetail.vue, /news/funcs.js 
+		{
+			"path":"pages/news/dsfcDetail",
+			"style":{
+				"navigationBarTitleText":"都市地产"
+			}
+		}*/
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#f7f7f7",
+		/* #ifdef MP-ALIPAY */
+		"navigationBarBackgroundColor": "black",
+		/* #endif */
+		"backgroundColor": "#ffffff",
+		"navigationStyle": "default"
+	},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#fa436a",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tabBar/home.png",
+				"selectedIconPath": "static/tabBar/home-current.png",
+				"text": "找房"
+			},
+			{
+				// #ifndef APP-PLUS
+				"pagePath": "pages/news/index1",
+				// #endif
+				// #ifdef APP-PLUS
+				"pagePath": "pages/news/index",
+				// #endif
+				"iconPath": "static/tabBar/news.png",
+				"selectedIconPath": "static/tabBar/news-current.png",
+				"text": "头条"
+			},
+			{
+				"pagePath": "pages/ask/index",
+				"iconPath": "static/tabBar/ask.png",
+				"selectedIconPath": "static/tabBar/ask-current.png",
+				"text": "帮办"
+			},
+			{
+				"pagePath": "pages/user/index",
+				"iconPath": "static/tabBar/user.png",
+				"selectedIconPath": "static/tabBar/user-current.png",
+				"text": "我的"
+			}
+		]
+	}
+}

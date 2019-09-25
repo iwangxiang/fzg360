@@ -1,0 +1,1186 @@
+<template>
+	<view class="tabs">
+		<view class="news-search-box">
+			<view class="news-search">
+				<view class="searchCity" @tap="changCity">
+					<text class="searchCity-text">{{city}}</text>
+					<image class="searchCity-image" src="../../static/down.png" mode="aspectFit"></image>
+				</view>
+				<view class="search-input-box">
+					<view class="search-input-image">
+						<image class="searchCity-search" src="../../static/search.png" mode="aspectFit"></image>
+					</view>
+					<input class="search-input" type="text" placeholder="请输入新闻关键词" placeholder-style="color:#b3b6be" disabled="true" @tap="goPath('search')" />
+				</view>
+			</view>
+		</view>
+		<scroll-view id="tab-bar" class="scroll-h" :scroll-x="true" :show-scrollbar="false" :scroll-into-view="scrollInto">
+			<view v-for="(tab,index) in tabBars" :key="tab.id" class="uni-tab-item" :id="'tab'+index" :data-current="index" @click="ontabtap">
+				<text class="uni-tab-item-title" :class="tabIndex==index ? 'uni-tab-item-title-active' : ''">{{tab.name}}</text>
+			</view>
+		</scroll-view>
+		<swiper :current="tabIndex" class="swiper-box" style="flex: 1;" :duration="300" @change="ontabchange">
+			<swiper-item class="swiper-item" v-for="(tab,index1) in listData" :key="index1">
+				<scroll-view class="scroll-v list" scroll-y :scroll-with-animation="true" @scrolltolower="loadMore(index1)">
+					<!-- #ifdef APP-PLUS-NVUE -->
+					<refresh class="refresh" @refresh="onrefresh(index1)" @pullingdown="onpullingdown" :display="tab.refreshing ? 'show' : 'hide'">
+						<div class="refresh-view">
+							<image class="refresh-icon" :src="refreshIcon" :style="{width: (tab.refreshing || pulling) ? 0: '32px'}" :class="{'refresh-icon-active': tab.refreshFlag}"></image>
+							<image class="loading-icon" :src="loadingIcon" v-if="tab.refreshing"></image>
+							<text class="loading-text">{{tab.refreshText}}</text>
+						</div>
+					</refresh>
+					<!-- #endif -->
+					<swiper v-if="tab.catid == 3 && sliderList.length" class="banner-swiper" duration="300" autoplay="true" interval="3500"
+					 circular="true">
+						<swiper-item class="banner-swiper-item" v-for="slider in sliderList" :key="slider.id" @tap="goPath('advert',slider)">
+							<image class="bannerImage" :src="slider.thumb" mode="widthFix"></image>
+							<view class="swiper-text" v-if="slider.title">
+								<text class="swiper-text-sonText">{{slider.title}}</text>
+							</view>
+						</swiper-item>
+					</swiper>
+					<view class="newsContentBox">
+						<view v-for="(item, iindex) in tab.data" :key="iindex" @tap="goPath(tab.type,item)">
+							<!--资讯或专题-->
+							<view class="newsContentPadding" v-if="item.recommend">
+								<!-- 大图资讯 -->
+								<view class="newsContent-box" v-if="item.large_thumb">
+									<view class="newsContent2">
+										<view class="newsContent2-tit-box"><text class="newsContent-tit">{{item.title}}</text></view>
+										<view class="newsContent3-img">
+											<image class="newsContent3-image" :src="item.large_thumb ? item.large_thumb : 'https://static.fzg360.com/images/app/nopic.gif'"></image>
+										</view>
+										<view class="newsContent-txt-box">
+											<view class="newsContent-txt1">
+												<view class="newsContent-txt1-iconBox">
+													<image class="newsContent-txt1-icon browseIcon" src="../../static/browse.png" mode="aspectFit"></image>
+													<text class="newsContent-txt1Text">{{item.hits}}</text>
+												</view>
+												<view class="newsContent-txt1-iconBox" v-if="item.fzgSource">
+													<image class="newsContent-txt1-icon coin" src="../../static/coin.png" mode="aspectFit"></image>
+													<text class="newsContent-txt1Text">{{item.fzgSource}}</text>
+												</view>
+												<view class="newsContent-txt2"><text class="newsContent-txt2Text">{{item.createdate}}</text></view>
+											</view>
+										</view>
+									</view>
+								</view>
+								<!-- 3图资讯 -->
+								<view class="newsContent-box" v-else-if="item.imgs">
+									<view class="newsContent2">
+										<view class="newsContent2-tit-box"><text class="newsContent-tit">{{item.title}}</text></view>
+										<view class="newsContent2-img">
+											<image class="newsContent2-image" v-for="(img, iiindex) in item.imgs" :key="iiindex" v-if="iiindex < 3" :src="img ? img : 'https://static.fzg360.com/images/app/nopic.gif'"
+											 mode="aspectFit"></image>
+										</view>
+										<view class="newsContent-txt-box">
+											<view class="newsContent-txt1">
+												<view class="newsContent-txt1-iconBox">
+													<image class="newsContent-txt1-icon browseIcon" src="../../static/browse.png" mode="aspectFit"></image>
+													<text class="newsContent-txt1Text">{{item.hits}}</text>
+												</view>
+												<view class="newsContent-txt1-iconBox" v-if="item.fzgSource">
+													<image class="newsContent-txt1-icon coin" src="../../static/coin.png" mode="aspectFit"></image>
+													<text class="newsContent-txt1Text">{{item.fzgSource}}</text>
+												</view>
+												<view class="newsContent-txt2"><text class="newsContent-txt2Text">{{item.createdate}}</text></view>
+											</view>
+										</view>
+									</view>
+								</view>
+								<!--小图资讯-->
+								<view class="newsContent-box newsContent1-box" v-else>
+									<view class="newsContent1">
+										<view class="newsContent1-tit-box"><text class="newsContent-tit">{{item.title}}</text></view>
+										<view class="newsContent-txt-box">
+											<view class="newsContent-txt1">
+												<view class="newsContent-txt1-iconBox">
+													<image class="newsContent-txt1-icon browseIcon" src="../../static/browse.png" mode="aspectFit"></image>
+													<text class="newsContent-txt1Text">{{item.hits}}</text>
+												</view>
+												<view class="newsContent-txt1-iconBox" v-if="item.fzgSource">
+													<image class="newsContent-txt1-icon coin" src="../../static/coin.png" mode="aspectFit"></image>
+													<text class="newsContent-txt1Text">{{item.fzgSource}}</text>
+												</view>
+												<view class="newsContent-txt2"><text class="newsContent-txt2Text">{{item.createdate}}</text></view>
+											</view>
+										</view>
+									</view>
+									<view class="newsContent1-img">
+										<image class="newsContent1-image" :src="item.thumb ? item.thumb : 'https://static.fzg360.com/images/app/nopic.gif'"
+										 mode="aspectFit"></image>
+									</view>
+								</view>
+							</view>
+							<!-- 视频 -->
+							<view v-else-if="item.video_url">
+								<!-- 深圳视频开头 -->
+								<view class="playBack-box" v-if="tab.type == 'video' && site == 'sz'">
+									<view class="playBack-head" v-if="heraldCount > 0 && iindex == 0" @tap.stop="goPath('dsfc',livingData)">
+										<view class="playBack-head1">直播预告</view>
+										<view class="playBack-head2">
+											<text class="playBack-tit-name">{{livingData.title}}</text>
+											<view class="playBack-tit-time">
+												<text class="titTimefont">开播时间：</text>
+												<text class="titTimefont timeMonth">{{livingData.begindate}}</text></view>
+										</view>
+									</view>
+									<view class="nowPlayBox" v-if="livingCount > 0 && iindex == 0" @tap.stop="goPath('dsfc',livingData)">
+										<image class="nowPlayImage" :src="livingData.thumb ? livingData.thumb : 'https://static.fzg360.com/images/app/nopic.gif'"></image>
+										<view class="nowPlayExplainBox">
+											<text class="nowPlayExplain1">{{livingData.title}}</text>
+											<view class="nowPlayExplain2">
+												<text class="explainW">有</text><text class="nowPlaySum">{{livingData.hits}}</text><text class="explainW">人正在观看直播</text>
+											</view>
+										</view>
+										<image class="nowPlayBtn" src="../../static/play.png" mode="aspectFit"></image>
+										<view class="nowPlaylogo"><text class="nowPlayLogoFont">正在直播</text></view>
+									</view>
+									<view class="playBack-tit-box" v-if="iindex == 0">
+										<text class="playBackTit">精彩回放</text>
+										<view class="titLine titLeftLine"></view>
+										<view class="titLine titRightLine"></view>
+									</view>
+									<view class="playBackContent-box" @tap.stop="goPath('dsfc',item)">
+										<view class="playBackContent">
+											<view class="playBackContent-img">
+												<image class="playBackContentImage" :src="item.thumb ? item.thumb : 'https://static.fzg360.com/images/app/nopic.gif'"></image>
+												<image class="playBackContentImageIcon" src="../../static/playback.png"></image>
+											</view>
+											<view class="playBackMess">
+												<text class="playBackMessTxt">{{item.title}}</text>
+												<view class="playBackMessTimeSum">
+													<text class="playBackMessTime">{{item.begindate}}</text>
+													<text class="playBackMessSum">{{item.hits}}人观看</text>
+												</view>
+												</view>
+										</view>
+									</view>
+								</view>
+								<!-- 深圳视频结束 -->
+								<view class="newsContentPadding" v-else @tap.stop="goPath('video',item)">
+									<view class="newsContent-box">
+										<view class="newsContent2">
+											<view class="newsContent2-tit-box"><text class="newsContent-tit">{{item.title}}</text></view>
+											<view class="newsContent3-img" @tap.stop="goWebView('视频',item.video_url)">
+												<image class="newsContent3-image" :src="item.thumb ? item.thumb : 'https://static.fzg360.com/images/app/nopic.gif'"></image>
+												<image class="newsContent3-play" src="../../static/play.png" mode="aspectFit"></image>
+											</view>
+											<view class="newsContent-txt-box">
+												<view class="newsContent-txt1">
+													<view class="newsContent-txt1-iconBox">
+														<image class="newsContent-txt1-icon browseIcon" src="../../static/browse.png" mode="aspectFit"></image>
+														<text class="newsContent-txt1Text">{{item.clicks}}</text>
+													</view>
+													<!-- <view class="newsContent-txt1-iconBox">
+													<image class="newsContent-txt1-icon coin" src="../../static/coin.png" mode="aspectFit"></image>
+													<text class="newsContent-txt1Text">50积分</text>
+												</view> -->
+												</view>
+												<view class="newsContent-txt2"><text class="newsContent-txt2Text">{{item.createdate}}</text></view>
+											</view>
+										</view>
+									</view>
+								</view>
+							</view>
+							
+							<!--广告-->
+							<view v-else-if="tab.type == 'appnews'" @tap.stop="goPath('advert',item)">
+								<!--横幅广告-->
+								<view class="newsContent-advBg newsContent-advBg1" v-if="item.catalog == 1">
+									<view class="newsContent-adv1">
+										<image class="newsContent-adv1-image" :src="item.thumb" mode="aspectFit"></image>
+										<image @tap.stop="closeAd(index1,iindex)" class="newsContent-adv1-close" src="../../static/close.png" mode="aspectFit"></image>
+									</view>
+								</view>
+								<!--小图广告-->
+								<view class="newsContent-advBg" v-else-if="item.catalog == 2">
+									<view class="newsContentPadding">
+										<view class="newsContent-box newsContent1-box noneBorder">
+											<view class="newsContent1">
+												<view class="newsContent1-tit-box"><text class="newsContent-tit">{{item.title}}</text></view>
+												<view class="newsContent4-txt-box">
+													<text class="advFont">广告</text>
+													<!-- <text class="houseFont">房产</text> -->
+												</view>
+											</view>
+											<view class="newsContent1-img">
+												<image class="newsContent1-image" :src="item.thumb ? item.thumb : 'https://static.fzg360.com/images/app/nopic.gif'"
+												 mode="aspectFit"></image>
+											</view>
+										</view>
+									</view>
+								</view>
+								<!--大图广告-->
+								<view class="newsContent-advBg" v-else-if="item.catalog == 3">
+									<view class="newsContentPadding">
+										<view class="newsContent-box noneBorder">
+											<view class="newsContent2">
+												<view class="newsContent2-tit-box"><text class="newsContent-tit">{{item.title}}</text></view>
+												<view class="newsContent3-img">
+													<image class="newsContent3-image" :src="item.thumb ? item.thumb : 'https://static.fzg360.com/images/app/nopic.gif'"></image>
+													<image class="newsContent-adv1-close" @tap.stop="closeAd(index1,iindex)" src="../../static/close.png" mode="aspectFit"></image>
+												</view>
+												<view class="newsContent5-txt-box">
+													<view class="fontBox">
+														<text class="advFont">广告</text>
+														<!-- <text class="houseFont">房产</text> -->
+													</view>
+													<view class="fontBox">
+														<text class="linkFont houseFont">了解详情 &gt;&gt;</text>
+													</view>
+												</view>
+											</view>
+										</view>
+									</view>
+								</view>
+								<!-- 大图视频广告 -->
+								<view class="newsContent-advBg" v-else>
+									<view class="newsContent-box noneBorder">
+										<view class="newsContent2-tit-box newsContentPadding"><text class="newsContent-tit">{{item.title}}</text></view>
+										<view class="newsContent3-img">
+											<image class="newsContent6-image" :src="item.thumb ? item.thumb : 'https://static.fzg360.com/images/app/nopic.gif'"></image>
+											<image class="newsContent-adv1-close" @tap.stop="closeAd(index1,iindex)" src="../../static/close.png" mode="aspectFit"></image>
+											<image class="newsContent3-play newsContent6-play" src="../../static/play.png" mode="aspectFit"></image>
+										</view>
+										<view class="newsContent5-txt-box newsContentPadding">
+											<view class="fontBox">
+												<text class="advFont">广告</text>
+												<!-- <text class="houseFont">房产</text> -->
+											</view>
+											<view class="fontBox">
+												<text class="linkFont houseFont">了解详情 &gt;&gt;</text>
+											</view>
+										</view>
+									</view>
+								</view>
+							</view>
+						</view>
+						<view class="loading-more">
+							<text class="loading-more-text">{{tab.loadingText}}</text>
+						</view>
+					</view>
+				</scroll-view>
+			</swiper-item>
+		</swiper>
+	</view>
+</template>
+<script>
+	import request from '@/common/request/request'
+	import api from '@/common/request/api'
+	import util from '@/common/util'
+	// 缓存每页最多
+	const MAX_CACHE_DATA = 100;
+	// 缓存页签数量
+	const MAX_CACHE_PAGE = 3;
+	export default {
+		components: {
+			// fzgIcon
+		},
+		data() {
+			return {
+				city: '城市',
+				cacheTab: [],
+				tabIndex: 0,
+				tabBars: [],
+				scrollLeft: 0,
+				sliderList: [],
+				listData: [], //列表数据
+				livingCount:0,
+				livingData:{},
+				heraldCount:0,
+				site:'',
+				type: '', //加载类型
+				catid: '', //类型id
+				tabIndexArr: [],
+				scrollInto: "",
+				showTips: false,
+				navigateFlag: false,
+				pulling: false,
+				refreshIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB5QTFRFcHBw3Nzct7e39vb2ycnJioqK7e3tpqam29vb////D8oK7wAAAAp0Uk5T////////////ALLMLM8AAABxSURBVHja7JVBDoAgDASrjqj//7CJBi90iyYeOHTPMwmFZrHjYyyFYYUy1bwUZqtJIYVxhf1a6u0R7iUvWsCcrEtwJHp8MwMdvh2amHduiZD3rpWId9+BgPd7Cc2LIkPyqvlQvKxKBJ//Qwq/CacAAwDUv0a0YuKhzgAAAABJRU5ErkJggg==",
+				loadingIcon: "data:image/gif;base64,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"
+			}
+		},
+		onLoad() {
+			this.initCity();
+			this.getNewsCatalog();
+		},
+		methods: {
+			changCity() {
+				uni.navigateTo({
+					url: '../index/city?type=news'
+				});
+			},
+			setCity(name) {
+				this.city = name;
+			},
+			initCity(){
+				this.site = util.getCity();
+				let cityStorage = uni.getStorageSync('cityName');
+				if (cityStorage) this.setCity(cityStorage);
+			},
+			goPath(type,item) {
+				switch(type){
+					case 'search':
+						uni.navigateTo({
+							url: '/pages/index/search?type=0'
+						});
+					break;
+					case 'appnews':
+						if(item.sid){
+							this.goWebView(item.title,item.jumpurl);
+						}else{
+							uni.navigateTo({
+								url: './detail?id=' + item.id
+							});
+						}
+					break;
+					case 'live':
+						uni.navigateTo({
+							url: './liveDetail?id=' + item.id
+						});
+					break;
+					case 'video':
+						uni.navigateTo({
+							url: './videoDetail?id=' + item.id
+						});
+					break;
+					case 'pcnews':
+						uni.navigateTo({
+							url: './pcDetail?id=' + item.id
+						});
+					break;
+					case 'finance':
+						uni.navigateTo({
+							url: './pcDetail?type='+type+'&id='+item.id
+						});
+					break;
+					case 'topic':
+						this.goWebView(item.title,item.jumpurl);
+					break;
+					case 'dsfc':
+                        //let url = 'http://news.fzg360.com/dsfc/detail/id/'+item.id+'.html?inWebView=1';
+						this.goWebView(item.title, item.jumpurl); //服务端接口设置跳转链接
+                        /*uni.navigateTo({
+                            url: './dsfcDetail?id=' + item.id
+						});*/
+					break;
+					case 'advert':
+						util.openAdDetail(item.link);
+					break;
+				}
+			},
+			loadMore(tabIndex) {
+				if (this.listData[tabIndex].loadingText == '没有更多') return;
+				//console.log(this.listData[tabIndex].requestParams.page)
+				this.getData(this.type, this.catid, tabIndex, 2);
+			},
+			ontabtap(e) {
+				let index = e.target.dataset.current || e.currentTarget.dataset.current;
+				if (this.tabIndex === index) {
+					return;
+				}
+				this.tabIndex = index;
+				this.switchTab(index);
+				this.scrollInto = 'tab' + (index - 2 > 0 ? index - 2 : 0);
+			},
+			ontabchange(e) {
+				let index = e.target.current || e.detail.current;
+				this.switchTab(index);
+			},
+			switchTab(index) {
+				this.type = this.tabBars[index].type;
+				this.catid = this.tabBars[index].catid;
+				if (this.listData[index].data.length === 0 && this.listData[index].loadingText !== '没有更多') {
+					this.getData(this.type, this.catid, index);
+				}
+				if (this.tabIndex === index) {
+					return;
+				}
+				// 缓存 tabId
+				if (this.listData[this.tabIndex].data.length > MAX_CACHE_DATA) {
+					let isExist = this.cacheTab.indexOf(this.tabIndex);
+					if (isExist < 0) {
+						this.cacheTab.push(this.tabIndex);
+						//console.log("cache index:: " + this.tabIndex);
+					}
+				}
+
+				this.tabIndex = index;
+				this.scrollInto = 'tab' + (index - 2 > 0 ? index - 2 : 0);
+
+				// 释放 tabId
+				if (this.cacheTab.length > MAX_CACHE_PAGE) {
+					let cacheIndex = this.cacheTab[0];
+					this.clearTabData(cacheIndex);
+					this.cacheTab.splice(0, 1);
+					//console.log("remove cache index:: " + cacheIndex);
+				}
+			},
+			clearTabData(e) {
+				this.listData[e].data.length = 0;
+				this.listData[e].loadingText = "加载更多...";
+			},
+			refreshData() {},
+			onrefresh(e) {
+				var tab = this.listData[this.tabIndex];
+				if (!tab.refreshFlag) {
+					return;
+				}
+				tab.refreshing = true;
+				tab.refreshText = "正在刷新...";
+
+				setTimeout(() => {
+					this.refreshData();
+					this.pulling = true;
+					tab.refreshing = false;
+					tab.refreshText = "已刷新";
+					setTimeout(() => { // TODO fix ios和Android 动画时间相反问题
+						this.pulling = false;
+					}, 500);
+				}, 2000);
+			},
+			onpullingdown(e) {
+				var tab = this.listData[this.tabIndex];
+				if (tab.refreshing || this.pulling) {
+					return;
+				}
+				if (Math.abs(e.pullingDistance) > Math.abs(e.viewHeight)) {
+					tab.refreshFlag = true;
+					tab.refreshText = "释放立即刷新";
+				} else {
+					tab.refreshFlag = false;
+					tab.refreshText = "下拉可以刷新";
+				}
+			},
+			goWebView(title, url) {
+				uni.navigateTo({
+					url: "/pages/index/webView?title=" + title + "&url=" + encodeURIComponent(url)
+				});
+			},
+			closeAd(index1, index2) {
+				uni.showModal({
+					content: '是否关闭本条广告？',
+					success: (res) => {
+						if (res.confirm) {
+							this.listData[index1].data.splice(index2, 1);
+						}
+					}
+				})
+			},
+			getNewsCatalog() {
+				request.get(api.siteApi(this.site, 'newsCatalog')).then(res => {
+					let data = res.data.data,financeIndex;
+					data.map((item,index) => {
+						if(item.type == 'finance') financeIndex = index;
+						item.id = 'tab' + item.id;
+						this.tabIndexArr.push({
+							page: 1,
+							status: 'loading',
+							reload: false
+						});
+						let aryItem = {
+							id: 'tab' + item.id,
+							name: item.name,
+							data: [],
+							catid: item.catid,
+							type: item.type,
+							refreshing: false,
+							refreshFlag: false,
+							refreshText: "",
+							requestParams: {
+								catid: item.catid,
+								page: 1,
+								limit: 20
+							},
+							loadingText: '加载中...'
+						};
+						this.listData.push(aryItem);
+					})
+					this.tabBars = data;
+					//console.log(this.tabBars)
+					data.forEach((item, index) => {
+						if (index == 0) {
+							this.type = item.type;
+							this.catid = item.catid;
+							this.getData(item.type, item.catid, 0);
+						}
+					})
+					setTimeout(()=>{
+						let financeIndexStorage = uni.getStorageSync('financeIndex') || '';
+						if(financeIndexStorage){
+							this.switchTab(financeIndex);
+							uni.removeStorageSync('financeIndex');
+						}
+					},500)
+				}).catch(error => {
+					console.error('error:', error);
+				});
+			},
+			getData(type, catid, tabIndex, action = 1) {
+				let activeTab = this.listData[tabIndex];
+				activeTab.requestParams.time = new Date().getTime() + '';
+				if (action === 1) {
+					activeTab.requestParams.page = 1;
+				}
+				//console.log(activeTab.requestParams.page)
+				let requestObj = { appnews: 'newsCatidList', video: 'videoList', live: 'liveList', topic: 'topicList', pcnews: 'newsPcList', finance: 'financeList' };
+				if(this.site == 'sz') requestObj['video'] = 'dsfcList';
+				request.get(api.siteApi(this.site, requestObj[type]), {data: activeTab.requestParams}).then(res => {
+					if (activeTab.requestParams.page == 1) {
+						if(res.data.data.slides) this.sliderList = res.data.data.slides;
+						if(requestObj['video'] == 'dsfcList'){ //深圳都市房产
+							this.livingCount = res.data.data.livingCount;
+							this.heraldCount = res.data.data.herald;
+							if(res.data.data.living) this.livingData = res.data.data.living;
+						}
+					}
+					let list = res.data.data.lists;
+					if (action === 1) {
+						activeTab.data = list;
+						this.refreshing = false;
+					} else {
+						list.forEach((news) => {
+							activeTab.data.push(news);
+						});
+					}
+					//console.log(this.listData)
+					if (activeTab.data.length >= res.data.data.total) activeTab.loadingText = '没有更多';
+					++activeTab.requestParams.page;
+					//console.log(activeTab.loadingText)
+				}).catch(error => {
+					uni.showToast({
+						title: '加载数据失败'
+					});
+				});
+			}
+		}
+	}
+</script>
+
+<style>
+	/* #ifndef APP-PLUS */
+	page {
+		width: 100%;
+		min-height: 100%;
+		display: flex;
+	}
+
+	/* #endif */
+
+	.tabs {
+		flex: 1;
+		flex-direction: column;
+		overflow: hidden;
+		background-color: #ffffff;
+		/* #ifdef MP-ALIPAY || MP-BAIDU */
+		height: 100vh;
+		/* #endif */
+	}
+
+	.news-search-box {
+		background-color: #f9f9f9;
+		padding: 10upx 0;
+	}
+
+	.news-search {
+		flex-direction: row;
+		margin: 0 20upx;
+		background-color: #e9e9e9;
+		border-radius: 8upx;
+		padding: 10upx 0;
+	}
+
+	.searchCity {
+		flex-direction: row;
+		position: relative;
+		border-right-color: #e6e6e6;
+		border-right-width: 1px;
+		border-right-style: solid;
+	}
+
+	.searchCity-text {
+		width: 140upx;
+		font-size: 28upx;
+		height: 60upx;
+		line-height: 60upx;
+		text-align: center;
+	}
+
+	.searchCity-image {
+		width: 26upx;
+		height: 26upx;
+		position: absolute;
+		top: 18upx;
+		right: 10upx;
+	}
+
+	.search-input-box {
+		flex-direction: row;
+		width: 570upx;
+		height: 60upx;
+	}
+
+	.search-input-image {
+		width: 60upx;
+		height: 60upx;
+	}
+
+	.searchCity-search {
+		width: 34upx;
+		height: 34upx;
+		margin: 13upx;
+	}
+
+	.search-input {
+		font-size: 28upx;
+		width: 510upx;
+		padding: 0 10upx 0 0;
+		height: 60upx;
+	}
+
+	.scroll-h {
+		width: 750upx;
+		height: 80upx;
+		background-color: #f9f9f9;
+		flex-direction: row;
+		/* #ifndef APP-PLUS */
+		white-space: nowrap;
+		/* #endif */
+	}
+
+
+	.uni-tab-item {
+		/* #ifndef APP-PLUS */
+		display: inline-block;
+		/* #endif */
+		flex-wrap: nowrap;
+		margin:0 40upx;
+		width:auto;
+	}
+
+	.uni-tab-item-title {
+		color: #999a9a;
+		font-size: 32upx;
+		padding: 19upx 0;
+		flex-wrap: nowrap;
+		/* #ifndef APP-PLUS */
+		white-space: nowrap;
+		/* #endif */
+	}
+
+	.uni-tab-item-title-active {
+		color: #2d2d2d;
+		font-weight: bold;
+		padding-bottom: 10upx;
+		border-bottom-color: #e83836;
+		border-bottom-width: 3px;
+		border-bottom-style: solid;
+	}
+
+	.swiper-box {
+		flex: 1;
+	}
+
+	.swiper-item {
+		flex: 1;
+	}
+
+	.scroll-v {
+		flex: 1;
+		/* #ifndef MP-ALIPAY */
+		flex-direction: column;
+		/* #endif */
+		width: 750upx;
+	}
+
+	.banner-swiper-item {
+		position: relative;
+	}
+
+	.bannerImage {
+		width: 750upx;
+		height: 360upx;
+	}
+
+	.swiper-text {
+		position: absolute;
+		bottom: 45upx;
+		/* #ifndef APP-PLUS */
+		bottom: 0;
+		/* #endif */
+		left: 0;
+		width: 750upx;
+		background-color: rgba(0, 0, 0, 0.6);
+	}
+
+	.swiper-text-sonText {
+		padding: 0 20upx;
+		color: #fff;
+		height: 50upx;
+		line-height: 50upx;
+		font-size: 24upx;
+		/* #ifndef APP-PLUS */
+		white-space: nowrap;
+		/* #endif */
+		text-overflow: ellipsis;
+		overflow: hidden;
+		lines: 1;
+	}
+
+
+	.newsContentPadding {
+		padding: 0 20upx;
+	}
+
+	.newsContent-box {
+		padding: 30upx 0;
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+		border-bottom-color: #e4e4e4;
+	}
+
+	.newsContent1-box {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.newsContent1 {
+		width: 500upx;
+		flex-direction: column;
+		margin-right: 20upx;
+	}
+
+	.newsContent-tit {
+		font-size: 34upx;
+		color: #3f3f3f;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* #ifndef APP-PLUS */
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		/* #endif */
+		lines: 2;
+
+	}
+
+	.newsContent-txt-box {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 20upx;
+	}
+
+	.newsContent-txt1 {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.newsContent-txt1-iconBox {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.newsContent-txt1Text {
+		font-size: 24upx;
+		color: #999;
+	}
+
+	.newsContent-txt1-icon {
+		width: 28upx;
+		height: 28upx;
+	}
+
+	.newsContent-txt2Text {
+		font-size: 24upx;
+		color: #999;
+		margin-left: 30upx;
+	}
+
+	.browseIcon {
+		margin-right: 10upx;
+	}
+
+	.coin {
+		margin: 0 10upx 0 20upx;
+	}
+
+	.newsContent1-image {
+		width: 190upx;
+		height: 136upx;
+	}
+
+	.newsContent-advBg {
+		background-color: #f7f7f7;
+	}
+
+	.newsContent-advBg1 {
+		padding: 20upx 0;
+	}
+
+	.newsContent-adv1 {
+		position: relative;
+	}
+
+	.newsContent-adv1-image {
+		width: 750upx;
+		height: 120upx;
+	}
+
+	.newsContent-adv1-close {
+		width: 60upx;
+		height: 60upx;
+		position: absolute;
+		top: 0;
+		right: 20upx;
+	}
+
+	.newsContent2 {
+		width: 710upx;
+	}
+
+	.newsContent2-img {
+		flex: 1;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 20upx;
+	}
+
+	.newsContent2-image {
+		width: 230upx;
+		height: 166upx;
+	}
+
+	.newsContent3-img {
+		position: relative;
+		margin-top: 20upx;
+	}
+
+	.newsContent3-image {
+		width: 710upx;
+		height: 360upx;
+	}
+
+	.newsContent3-play {
+		position: absolute;
+		left: 301upx;
+		top: 126upx;
+		width: 108upx;
+		height: 108upx;
+	}
+
+	.noneBorder {
+		border-bottom-color: transparent;
+	}
+
+	.newsContent4-txt-box {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 15upx;
+	}
+
+	.advFont {
+		font-size: 24upx;
+		color: #a1a1a1;
+		background-color: #fff;
+		border-width: 1px;
+		border-style: solid;
+		border-color: #a1a1a1;
+		width: 70upx;
+		padding: 2upx 0;
+		text-align: center;
+		border-radius: 6upx;
+		margin-right: 20upx;
+	}
+
+	.houseFont {
+		font-size: 24upx;
+		color: #a1a1a1;
+	}
+
+	.fontBox {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.newsContent5-txt-box {
+		flex: 1;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-top: 20upx;
+	}
+
+	.newsContent6-image {
+		width: 750upx;
+		height: 360upx;
+	}
+
+	.newsContent6-play {
+		left: 321upx;
+	}
+
+	/******************************/
+	.refresh {
+		width: 750upx;
+		height: 64px;
+		justify-content: center;
+	}
+
+	.refresh-view {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.refresh-icon {
+		width: 32px;
+		height: 32px;
+		transition-duration: .5s;
+		transition-property: transform;
+		transform: rotate(0deg);
+		transform-origin: 16px 16px;
+	}
+
+	.refresh-icon-active {
+		transform: rotate(180deg);
+	}
+
+	.loading-icon {
+		width: 20px;
+		height: 20px;
+		margin-right: 5px;
+	}
+
+	.loading-icon-active {
+		transform: rotate(21600deg);
+	}
+
+	.loading-text {
+		margin-left: 2px;
+		font-size: 16px;
+		color: #999999;
+	}
+
+	.loading-more {
+		align-items: center;
+		justify-content: center;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		text-align: center;
+	}
+
+	.loading-more-text {
+		font-size: 28upx;
+		color: #999;
+	}
+	.nowPlayBox{
+		position:relative;
+		margin-bottom:30upx;
+	}
+	.nowPlayImage{
+		width:750upx;
+		height:480upx;
+	}
+	.nowPlayExplainBox{
+		position:absolute;
+		bottom:0;
+		left:0;
+		width:750upx;
+		background-color:rgba(0,0,0,0.6);
+		padding:15upx 0;
+	}
+	.nowPlayExplain1{
+		font-size:32upx;
+		color:#fff;
+		padding:0 20upx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* #ifndef APP-PLUS */
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		/* #endif */
+		lines: 1;
+	}
+	.nowPlayExplain2{
+		flex-direction: row;
+		padding:0 20upx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* #ifndef APP-PLUS */
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		/* #endif */
+		lines: 1;
+		margin-top:5upx;
+	}
+	.explainW{
+		font-size:32upx;
+		color:#fff;
+	}
+	.nowPlaySum{
+		font-size:32upx;
+		color:#e83836;
+		font-weight:700;
+		margin:0 10upx;
+	}
+	.nowPlayBtn{
+		width:108upx;
+		height:108upx;
+		position:absolute;
+		top:180upx;
+		left:321upx;
+	}
+	.nowPlaylogo{
+		position:absolute;
+		top:30upx;
+		left:30upx;
+	}
+	.nowPlayLogoFont{
+		font-size:28upx;
+		color:#e83836;
+		border-width:1px;
+		border-style:solid;
+		border-color:#e83836;
+		border-radius:30upx;
+		width:170upx;
+		height:60upx;
+		text-align: center;
+		line-height:60upx;
+		background-color: #fff;
+	}
+	.playBack-head{
+		padding:30upx 50upx;
+		flex-direction:row;
+		align-items: center;
+	}
+	.playBack-head1{
+		font-size:40upx;
+		width:90upx;
+		text-align: center;
+		margin-right:20upx;
+	}
+	.playBack-head2{
+		width:540upx;
+	}
+	.playBack-tit-name{
+		font-size:32upx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* #ifndef APP-PLUS */
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		/* #endif */
+		lines: 1;
+	}
+	.playBack-tit-time{
+		flex-direction: row;
+		margin-top:10upx;
+	}
+	.titTimefont{
+		font-size:28upx;
+	}
+	.timeMonth{
+		margin:0 10upx;
+	}
+	.playBack-tit-box {
+		position: relative;
+		margin: 0 0 20upx;
+	}
+
+	.playBackTit {
+		font-size: 36upx;
+		height: 60upx;
+		line-height: 60upx;
+		text-align: center;
+	}
+
+	.titLine {
+		width: 230upx;
+		height: 2upx;
+		background-color: #e6e6e6;
+		position: absolute;
+		top: 30upx;
+	}
+
+	.titLeftLine {
+		left: 40upx;
+	}
+
+	.titRightLine {
+		right: 40upx;
+	}
+	
+	.playBackContent {
+		flex-direction: row;
+		width: 710upx;
+		margin: 0 20upx;
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+		border-bottom-color: #e4e4e4;
+		padding: 30upx 0;
+	}
+
+	.playBackContent-img {
+		position: relative;
+		width: 190upx;
+		height: 136upx;
+	}
+
+	.playBackContentImage {
+		width: 190upx;
+		height: 136upx;
+	}
+
+	.playBackContentImageIcon {
+		position: absolute;
+		top: 10upx;
+		right: 5upx;
+		width: 76upx;
+		height: 34upx;
+	}
+
+	.playBackMess {
+		width: 500upx;
+		margin-left: 20upx;
+	}
+
+	.playBackMessTxt {
+		font-size: 34upx;
+		color: #3f3f3f;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		/* #ifndef APP-PLUS */
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		/* #endif */
+		lines: 2;
+	}
+
+	.playBackMessTimeSum {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 20upx;
+	}
+
+	.playBackMessTime {
+		width: 300upx;
+		font-size: 24upx;
+		color: #999;
+	}
+
+	.playBackMessSum {
+		width: 200upx;
+		text-align: right;
+		font-size: 24upx;
+		color: #999;
+	}
+</style>
